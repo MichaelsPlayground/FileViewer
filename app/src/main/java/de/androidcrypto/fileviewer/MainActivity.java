@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -97,16 +98,168 @@ public class MainActivity extends AppCompatActivity {
 
     private void showFileContent() {
         if (contentLoaded != null) {
+
+            Thread DoDeleteGoogleDriveFile = new Thread() {
+                public void run() {
+                        StringBuilder sb = new StringBuilder();
+                        int contentLoadedLength = contentLoaded.length;
+                        //writeToUiAppend(readResult, "contentLoaded length: " + contentLoadedLength);
+                        // processing in 8 byte chunks
+                        int CHUNK_SIZE = 8;
+                        int completeRounds = contentLoadedLength / CHUNK_SIZE;
+                        //writeToUiAppend(readResult, "completeRounds (each 8 byte): " + completeRounds);
+                        int lastBytes = contentLoadedLength - (completeRounds * CHUNK_SIZE);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            writeToUiAppend(readResult, "contentLoaded length: " + contentLoadedLength);
+                            writeToUiAppend(readResult, "completeRounds (each 8 byte): " + completeRounds);
+                            writeToUiAppend(readResult, "lastBytes: " + lastBytes);
+
+                            //Toast.makeText(DeleteGoogleDriveFile.this, "selected file deleted", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+
+                        //writeToUiAppend(readResult, "lastBytes: " + lastBytes);
+                        //StringBuilder sb = new StringBuilder();
+                        for (int part = 0; part < completeRounds; part++) {
+                            byte[] chunkPart = get8ByteChunk(part);
+                            //System.out.println("part " + part + " : " + bytesToHex(chunkPart));
+                            //sb.append(hexPrint((part * CHUNK_SIZE), chunkPart)).append("\n");
+                            String chunkString = hexPrint((part * CHUNK_SIZE), chunkPart);
+                            sb.append(chunkString).append("\n");
+
+                            //writeToUiAppend(readResult, chunkString);
+
+                        }
+                        if (lastBytes > 0) {
+                            byte[] lastChunkPart = getLastByteChunk(completeRounds, lastBytes);
+                            //System.out.println("part " + completeRounds + " : " + bytesToHex(lastChunkPart));
+                            String chunkString = hexPrint((completeRounds * CHUNK_SIZE), lastChunkPart);
+                            sb.append(chunkString).append("\n");
+                        }
+                        final String completeString = sb.toString();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            writeToUiAppend(readResult, completeString);
+                        }
+                    });
+
+                        //String completeOutput = sb.toString();
+                        //writeToUiAppend(readResult, completeOutput);
+
+                        // this is for processing the complete file
+
+                        if (contentLoaded.length < MAXIMUM_FILE_SIZE) {
+                            //readResult.setTextSize(coverPixelToDP(textSizeInDp));
+                            dumpExportString = HexDumpOwn.prettyPrint(contentLoaded, 0);
+                            writeToUiAppend(readResult, dumpExportString);
+                        } else {
+                            String message = "The file is larger than the allowed content of " + MAXIMUM_FILE_SIZE + " bytes.";
+                            writeToUiAppend(readResult, message);
+                            //readResult.setText(message);
+                            writeToUiToast(message);
+                        }
+
+
+
+                }
+            };
+            DoDeleteGoogleDriveFile.start();
+
+            // this is for processing the complete file
+
             if (contentLoaded.length < MAXIMUM_FILE_SIZE) {
                 //readResult.setTextSize(coverPixelToDP(textSizeInDp));
                 dumpExportString = HexDumpOwn.prettyPrint(contentLoaded, 0);
                 writeToUiAppend(readResult, dumpExportString);
             } else {
                 String message = "The file is larger than the allowed content of " + MAXIMUM_FILE_SIZE + " bytes.";
-                readResult.setText(message);
+                writeToUiAppend(readResult, message);
+                //readResult.setText(message);
                 writeToUiToast(message);
             }
         }
+    }
+
+    private String hexPrint(int address, byte[] data) {
+        // get hex address of part
+        String hexAddress = formatWithNullsLeft(Integer.toHexString(address), 8) + ":";
+        String hexContent = bytesToHexBlank(data);
+        // add blanks depending on data length (7 = add 3 blanks, 6 = add 6 blanks
+        for (int i = 0; i < (8 - data.length); i++) {
+            hexContent += "   ";
+        }
+        String asciiRowString = "";
+        for (int j = 0; j < data.length; j++) {
+            // check for maximal characters
+                asciiRowString = asciiRowString + returnPrintableChar(data[j], true);
+        }
+        String hexAscii = (char) 124 + formatWithBlanksRight(asciiRowString, 8);
+        return hexAddress + hexContent + hexAscii;
+    }
+
+    public static String formatWithNullsLeft(String value, int len) {
+        while (value.length() < len) {
+            value = "0" + value;
+        }
+        return value;
+    }
+
+    public static String formatWithBlanksRight(String value, int len) {
+        while (value.length() < len) {
+            value += " ";
+        }
+        return value;
+    }
+
+    public static String bytesToHexBlank(byte[] bytes) {
+        StringBuffer result = new StringBuffer();
+        for (byte b : bytes) result.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1)).append(" ");
+        return result.toString();
+    }
+
+    public static char returnPrintableChar(byte inputByte, Boolean printDotBool) {
+        // ascii-chars from these ranges are printed
+        // 48 -  57 = 0-9
+        // 65 -  90 = A-Z
+        // 97 - 122 = a-z
+        // if printDotBool = true then print a dot "."
+        char returnChar = 0;
+        if (printDotBool == true) {
+            returnChar = 46;
+        }
+        if ((inputByte >= 48) && (inputByte <= 57)) {
+            returnChar = (char) inputByte;
+        }
+        if ((inputByte >= 65) && (inputByte <= 90)) {
+            returnChar = (char) inputByte;
+        }
+        if ((inputByte >= 97) && (inputByte <= 122)) {
+            returnChar = (char) inputByte;
+        }
+        return returnChar;
+    }
+
+
+
+    private byte[] get8ByteChunk(int chunkPart) {
+        // needs a global defined contentLoaded byte array
+        return Arrays.copyOfRange(contentLoaded, (chunkPart * 8), ((chunkPart * 8) + 8));
+    }
+
+    private byte[] getLastByteChunk(int chunkPart, int numberLastBytes) {
+        // needs a global defined contentLoaded byte array
+        return Arrays.copyOfRange(contentLoaded, (chunkPart * 8), ((chunkPart * 8) + numberLastBytes));
+    }
+
+    public static String bytesToHex(byte[] bytes) {
+        StringBuffer result = new StringBuffer();
+        for (byte b : bytes) result.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+        return result.toString();
     }
 
     /**
