@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String dumpExportString;
     private String dumpFileName;
-    private int MAXIMUM_FILE_SIZE = 10000; // be careful when increasing the maximum as it may block your UI and you get an "Application not responding" notice
+    private int MAXIMUM_FILE_SIZE = 20000; // be careful when increasing the maximum as it may block your UI and you get an "Application not responding" notice
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private int coverPixelToDP (int dps) {
+    private int coverPixelToDP(int dps) {
         final float scale = this.getResources().getDisplayMetrics().density;
         return (int) (dps * scale);
     }
@@ -101,14 +101,14 @@ public class MainActivity extends AppCompatActivity {
 
             Thread DoDeleteGoogleDriveFile = new Thread() {
                 public void run() {
-                        StringBuilder sb = new StringBuilder();
-                        int contentLoadedLength = contentLoaded.length;
-                        //writeToUiAppend(readResult, "contentLoaded length: " + contentLoadedLength);
-                        // processing in 8 byte chunks
-                        int CHUNK_SIZE = 8;
-                        int completeRounds = contentLoadedLength / CHUNK_SIZE;
-                        //writeToUiAppend(readResult, "completeRounds (each 8 byte): " + completeRounds);
-                        int lastBytes = contentLoadedLength - (completeRounds * CHUNK_SIZE);
+                    StringBuilder sb = new StringBuilder();
+                    int contentLoadedLength = contentLoaded.length;
+                    //writeToUiAppend(readResult, "contentLoaded length: " + contentLoadedLength);
+                    // processing in 8 byte chunks
+                    int CHUNK_SIZE = 8;
+                    int completeRounds = contentLoadedLength / CHUNK_SIZE;
+                    //writeToUiAppend(readResult, "completeRounds (each 8 byte): " + completeRounds);
+                    int lastBytes = contentLoadedLength - (completeRounds * CHUNK_SIZE);
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -122,25 +122,25 @@ public class MainActivity extends AppCompatActivity {
                     });
 
 
-                        //writeToUiAppend(readResult, "lastBytes: " + lastBytes);
-                        //StringBuilder sb = new StringBuilder();
-                        for (int part = 0; part < completeRounds; part++) {
-                            byte[] chunkPart = get8ByteChunk(part);
-                            //System.out.println("part " + part + " : " + bytesToHex(chunkPart));
-                            //sb.append(hexPrint((part * CHUNK_SIZE), chunkPart)).append("\n");
-                            String chunkString = hexPrint((part * CHUNK_SIZE), chunkPart);
-                            sb.append(chunkString).append("\n");
+                    //writeToUiAppend(readResult, "lastBytes: " + lastBytes);
+                    //StringBuilder sb = new StringBuilder();
+                    for (int part = 0; part < completeRounds; part++) {
+                        byte[] chunkPart = get8ByteChunk(part);
+                        //System.out.println("part " + part + " : " + bytesToHex(chunkPart));
+                        //sb.append(hexPrint((part * CHUNK_SIZE), chunkPart)).append("\n");
+                        String chunkString = hexPrint((part * CHUNK_SIZE), chunkPart);
+                        sb.append(chunkString).append("\n");
 
-                            //writeToUiAppend(readResult, chunkString);
+                        //writeToUiAppend(readResult, chunkString);
 
-                        }
-                        if (lastBytes > 0) {
-                            byte[] lastChunkPart = getLastByteChunk(completeRounds, lastBytes);
-                            //System.out.println("part " + completeRounds + " : " + bytesToHex(lastChunkPart));
-                            String chunkString = hexPrint((completeRounds * CHUNK_SIZE), lastChunkPart);
-                            sb.append(chunkString).append("\n");
-                        }
-                        final String completeString = sb.toString();
+                    }
+                    if (lastBytes > 0) {
+                        byte[] lastChunkPart = getLastByteChunk(completeRounds, lastBytes);
+                        //System.out.println("part " + completeRounds + " : " + bytesToHex(lastChunkPart));
+                        String chunkString = hexPrint((completeRounds * CHUNK_SIZE), lastChunkPart);
+                        sb.append(chunkString).append("\n");
+                    }
+                    final String completeString = sb.toString();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -148,30 +148,29 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                        //String completeOutput = sb.toString();
-                        //writeToUiAppend(readResult, completeOutput);
+                    //String completeOutput = sb.toString();
+                    //writeToUiAppend(readResult, completeOutput);
 
-                        // this is for processing the complete file
-
-                        if (contentLoaded.length < MAXIMUM_FILE_SIZE) {
-                            //readResult.setTextSize(coverPixelToDP(textSizeInDp));
-                            dumpExportString = HexDumpOwn.prettyPrint(contentLoaded, 0);
-                            writeToUiAppend(readResult, dumpExportString);
-                        } else {
-                            String message = "The file is larger than the allowed content of " + MAXIMUM_FILE_SIZE + " bytes.";
-                            writeToUiAppend(readResult, message);
-                            //readResult.setText(message);
-                            writeToUiToast(message);
-                        }
-
-
+                    // this is for processing the complete file
+/*
+                    if (contentLoaded.length < MAXIMUM_FILE_SIZE) {
+                        //readResult.setTextSize(coverPixelToDP(textSizeInDp));
+                        dumpExportString = HexDumpOwn.prettyPrint(contentLoaded, 0);
+                        writeToUiAppend(readResult, dumpExportString);
+                    } else {
+                        String message = "The file is larger than the allowed content of " + MAXIMUM_FILE_SIZE + " bytes.";
+                        writeToUiAppend(readResult, message);
+                        //readResult.setText(message);
+                        writeToUiToast(message);
+                    }
+*/
 
                 }
             };
             DoDeleteGoogleDriveFile.start();
 
             // this is for processing the complete file
-
+/*
             if (contentLoaded.length < MAXIMUM_FILE_SIZE) {
                 //readResult.setTextSize(coverPixelToDP(textSizeInDp));
                 dumpExportString = HexDumpOwn.prettyPrint(contentLoaded, 0);
@@ -182,6 +181,8 @@ public class MainActivity extends AppCompatActivity {
                 //readResult.setText(message);
                 writeToUiToast(message);
             }
+
+ */
         }
     }
 
@@ -196,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         String asciiRowString = "";
         for (int j = 0; j < data.length; j++) {
             // check for maximal characters
-                asciiRowString = asciiRowString + returnPrintableChar(data[j], true);
+            asciiRowString = asciiRowString + returnPrintableChar(data[j], true);
         }
         String hexAscii = (char) 124 + formatWithBlanksRight(asciiRowString, 8);
         return hexAddress + hexContent + hexAscii;
@@ -218,7 +219,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static String bytesToHexBlank(byte[] bytes) {
         StringBuffer result = new StringBuffer();
-        for (byte b : bytes) result.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1)).append(" ");
+        for (byte b : bytes)
+            result.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1)).append(" ");
         return result.toString();
     }
 
@@ -243,7 +245,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return returnChar;
     }
-
 
 
     private byte[] get8ByteChunk(int chunkPart) {
@@ -293,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
                             // Perform operations on the document using its URI.
                             try {
                                 contentLoaded = readBytesFromUri(uri);
-                                showFileContent();
+                                //showFileContent();
                             } catch (IOException e) {
                                 contentLoaded = null;
                                 e.printStackTrace();
