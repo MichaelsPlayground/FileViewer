@@ -22,15 +22,15 @@ public class HexDumpOwn {
         }
         String asciiRowString = "";
         outputLineString = "";
-        int laengeVorspannInt = 0; // decimal + 9, hex + 9, decimal+hex + 18
+        int lengthHeaderInt = 0; // decimal + 9, hex + 9, decimal+hex + 18
         if (printHeaderBool == true) {
             if (printDecimalAddressBool == true) {
                 outputLineString = outputLineString + "Decimal  ";
-                laengeVorspannInt = laengeVorspannInt + 9;
+                lengthHeaderInt = lengthHeaderInt + 9;
             }
             if (printHexAddressBool == true) {
                 outputLineString = outputLineString + "Hex      ";
-                laengeVorspannInt = laengeVorspannInt + 9;
+                lengthHeaderInt = lengthHeaderInt + 9;
             }
             outputLineString = outputLineString + formatWithBlanksRight("Hexadecimalc", (numberHexInt * 3));
             if (printAscii == true) {
@@ -61,16 +61,16 @@ public class HexDumpOwn {
             i--; // correction of the counter
             if (printAscii == true) {
                 if (printAdditionalToConsole) {
-                    System.out.println(formatWithBlanksRight(outputLineString, (laengeVorspannInt + (numberHexInt * 3)))
+                    System.out.println(formatWithBlanksRight(outputLineString, (lengthHeaderInt + (numberHexInt * 3)))
                             + (char) 124 + formatWithBlanksRight(asciiRowString, (2 + numberHexInt)));
                 }
-                output = output + "\n" + formatWithBlanksRight(outputLineString, (laengeVorspannInt + (numberHexInt * 3)))
+                output = output + "\n" + formatWithBlanksRight(outputLineString, (lengthHeaderInt + (numberHexInt * 3)))
                         + (char) 124 + formatWithBlanksRight(asciiRowString, (2 + numberHexInt));
             } else {
                 if (printAdditionalToConsole) {
-                    System.out.println(formatWithBlanksRight(outputLineString, (laengeVorspannInt + (numberHexInt * 3))));
+                    System.out.println(formatWithBlanksRight(outputLineString, (lengthHeaderInt + (numberHexInt * 3))));
                 }
-                output = output + "\n" + formatWithBlanksRight(outputLineString, (laengeVorspannInt + (numberHexInt * 3)));
+                output = output + "\n" + formatWithBlanksRight(outputLineString, (lengthHeaderInt + (numberHexInt * 3)));
             }
         }
         return output;
@@ -84,15 +84,15 @@ public class HexDumpOwn {
         int adresseInt = 0;
         String asciiRowString = "";
         outputLineString = "";
-        int laengeVorspannInt = 0; // decimal + 9, hex + 9, decimal+hex + 18
+        int lengthHeaderInt = 0; // decimal + 9, hex + 9, decimal+hex + 18
         if (printHeaderBool == true) {
             if (printDecimalAddressBool == true) {
                 outputLineString = outputLineString + "Decimal  ";
-                laengeVorspannInt = laengeVorspannInt + 9;
+                lengthHeaderInt = lengthHeaderInt + 9;
             }
             if (printHexAddressBool == true) {
                 outputLineString = outputLineString + "Hex      ";
-                laengeVorspannInt = laengeVorspannInt + 9;
+                lengthHeaderInt = lengthHeaderInt + 9;
             }
             outputLineString = outputLineString + formatWithBlanksRight("Hexadecimalc", (numberHexInt * 3));
             if (printAscii == true) {
@@ -123,16 +123,16 @@ public class HexDumpOwn {
             i--; // correction of the counter
             if (printAscii == true) {
                 if (printAdditionalToConsole) {
-                    System.out.println(formatWithBlanksRight(outputLineString, (laengeVorspannInt + (numberHexInt * 3)))
+                    System.out.println(formatWithBlanksRight(outputLineString, (lengthHeaderInt + (numberHexInt * 3)))
                             + (char) 124 + formatWithBlanksRight(asciiRowString, (2 + numberHexInt)));
                 }
-            output = output + "\n" + formatWithBlanksRight(outputLineString, (laengeVorspannInt + (numberHexInt * 3)))
+            output = output + "\n" + formatWithBlanksRight(outputLineString, (lengthHeaderInt + (numberHexInt * 3)))
                     + (char) 124 + formatWithBlanksRight(asciiRowString, (2 + numberHexInt));
             } else {
                 if (printAdditionalToConsole) {
-                    System.out.println(formatWithBlanksRight(outputLineString, (laengeVorspannInt + (numberHexInt * 3))));
+                    System.out.println(formatWithBlanksRight(outputLineString, (lengthHeaderInt + (numberHexInt * 3))));
                 }
-                output = output + "\n" + formatWithBlanksRight(outputLineString, (laengeVorspannInt + (numberHexInt * 3)));
+                output = output + "\n" + formatWithBlanksRight(outputLineString, (lengthHeaderInt + (numberHexInt * 3)));
             }
         }
         return output;
